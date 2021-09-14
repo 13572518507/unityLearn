@@ -1,0 +1,121 @@
+﻿using System.Collections;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class player : MonoBehaviour
+{
+    public float speed;
+    public float jumpForce;
+    public LayerMask ground;
+    public Collider2D coll;
+    public double collections;
+    public Text cherText;
+    private Rigidbody2D rib;
+    private Animator ani;
+    private float horizontal;
+    private bool jumpping;
+
+
+
+    void Start()
+    {
+        rib = GetComponent<Rigidbody2D>();
+        ani = GetComponent<Animator>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Move();
+        switchAnimation();
+    }
+
+    void FixedUpdate()
+    {
+
+        if (horizontal != 0)
+        {
+            rib.velocity = new Vector2(horizontal * speed * Time.deltaTime, rib.velocity.y);
+        }
+
+        
+    }
+
+
+    void Move()
+    {
+        horizontal = Input.GetAxis("Horizontal");
+        float hori = Input.GetAxisRaw("Horizontal");
+        if(hori != 0){
+            transform.localScale = new Vector3(hori, 1, 1);
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (coll.IsTouchingLayers(ground))
+            {
+                ani.SetBool("jump", true);
+                rib.velocity = new Vector2(rib.velocity.x, jumpForce);
+                jumpping = true;
+            }
+
+        }
+
+        if (horizontal != 0)
+        {
+            if (!jumpping)
+            {
+                ani.SetFloat("running", Math.Abs(horizontal));
+                ani.SetBool("idle", false);
+            }
+            else
+            {
+                ani.SetFloat("running", 0);
+            }
+        }
+        else
+        {
+            ani.SetBool("idle", true);
+            ani.SetFloat("running", 0);
+        }
+
+
+
+        if (rib.velocity.y < 0 && ani.GetBool("jump"))
+        {
+            ani.SetBool("jump", false);
+            ani.SetBool("fall", true);
+        }
+
+    }
+
+    void switchAnimation()
+    {
+       
+        
+        if(coll.IsTouchingLayers(ground) && ani.GetBool("fall"))
+        {
+            ani.SetBool("fall", false);
+            jumpping = false;
+            ani.SetBool("idle", true);
+        }
+        
+        
+    }
+
+    
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.tag == "cherry")
+        {
+            col.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            Destroy(col.gameObject);
+            collections = collections + 1;
+            cherText.text = collections.ToString();
+            Debug.Log("Triggered by Cherry");
+                
+        }
+    }
+}
