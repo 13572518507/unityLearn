@@ -16,6 +16,7 @@ public class player : MonoBehaviour
     private Animator ani;
     private float horizontal;
     private bool jumpping;
+    private bool isHurt;
 
 
 
@@ -28,18 +29,21 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       
         Move();
         switchAnimation();
+       
     }
 
     void FixedUpdate()
     {
-
-        if (horizontal != 0)
+        if (!isHurt)
         {
-            rib.velocity = new Vector2(horizontal * speed * Time.deltaTime, rib.velocity.y);
+            if (horizontal != 0)
+            {
+                rib.velocity = new Vector2(horizontal * speed * Time.deltaTime, rib.velocity.y);
+            }
         }
-
         
     }
 
@@ -101,21 +105,64 @@ public class player : MonoBehaviour
             jumpping = false;
             ani.SetBool("idle", true);
         }
-        
-        
+        if(isHurt && Math.Abs(rib.velocity.x) < 0.1f)
+        {
+            ani.SetBool("idle", true);
+            ani.SetBool("hurt", false);
+            ani.SetFloat("running", 0);
+            isHurt = false;
+        }
+        //if(coll.IsTouchingLayers(ground) && rib.velocity.x == 0)
+        //{
+        //    ani.SetBool("idle", true);
+        //    ani.SetBool("hurt", false);
+        //    ani.SetFloat("running", 0);
+        //    isHurt = false;
+        //}
+
     }
 
     
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.tag == "cherry")
+        if (col.gameObject.tag == "cherry")
         {
             col.gameObject.GetComponent<BoxCollider2D>().enabled = false;
             Destroy(col.gameObject);
             collections = collections + 1;
             cherText.text = collections.ToString();
             Debug.Log("Triggered by Cherry");
-                
+        }
+
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "enemy")
+        {
+            if (ani.GetBool("fall"))
+            {
+                ani.SetBool("jump", true);
+                rib.velocity = new Vector2(rib.velocity.x, jumpForce);
+                //jumpping = true;
+                Destroy(collision.gameObject);
+            }
+            else
+            {
+                if(collision.gameObject.transform.position.x > gameObject.transform.position.x)
+                {
+                    isHurt = true;
+                    rib.velocity = new Vector2(-5, rib.velocity.y);
+                    ani.SetBool("hurt", true);
+                }
+                else
+                {
+                    isHurt = true;
+                    rib.velocity = new Vector2(5, rib.velocity.y);
+                    ani.SetBool("hurt", true);
+                }
+            }
         }
     }
+
 }
