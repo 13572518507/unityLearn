@@ -29,10 +29,10 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+
         Move();
         switchAnimation();
-       
+
     }
 
     void FixedUpdate()
@@ -44,7 +44,7 @@ public class player : MonoBehaviour
                 rib.velocity = new Vector2(horizontal * speed * Time.deltaTime, rib.velocity.y);
             }
         }
-        
+
     }
 
 
@@ -52,7 +52,8 @@ public class player : MonoBehaviour
     {
         horizontal = Input.GetAxis("Horizontal");
         float hori = Input.GetAxisRaw("Horizontal");
-        if(hori != 0){
+        if (hori != 0)
+        {
             transform.localScale = new Vector3(hori, 1, 1);
         }
 
@@ -85,44 +86,38 @@ public class player : MonoBehaviour
             ani.SetFloat("running", 0);
         }
 
+    }
 
-
+    void switchAnimation()
+    {
+        //下落判断
         if (rib.velocity.y < 0 && ani.GetBool("jump"))
         {
             ani.SetBool("jump", false);
             ani.SetBool("fall", true);
         }
 
-    }
-
-    void switchAnimation()
-    {
-       
-        
-        if(coll.IsTouchingLayers(ground) && ani.GetBool("fall"))
+        //下落接触地面
+        if (coll.IsTouchingLayers(ground) && ani.GetBool("fall"))
         {
             ani.SetBool("fall", false);
             jumpping = false;
             ani.SetBool("idle", true);
         }
-        if(isHurt && Math.Abs(rib.velocity.x) < 0.1f)
+
+        //受伤后重返idle
+        if (isHurt && Math.Abs(rib.velocity.x) < 0.1f)
         {
             ani.SetBool("idle", true);
             ani.SetBool("hurt", false);
             ani.SetFloat("running", 0);
             isHurt = false;
         }
-        //if(coll.IsTouchingLayers(ground) && rib.velocity.x == 0)
-        //{
-        //    ani.SetBool("idle", true);
-        //    ani.SetBool("hurt", false);
-        //    ani.SetFloat("running", 0);
-        //    isHurt = false;
-        //}
+
 
     }
 
-    
+
     void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.tag == "cherry")
@@ -143,13 +138,15 @@ public class player : MonoBehaviour
             if (ani.GetBool("fall"))
             {
                 ani.SetBool("jump", true);
+                ani.SetBool("fall", false);
                 rib.velocity = new Vector2(rib.velocity.x, jumpForce);
                 //jumpping = true;
-                Destroy(collision.gameObject);
+                //Destroy(collision.gameObject);
+                collision.gameObject.GetComponent<frog>().deathAnimation();
             }
             else
             {
-                if(collision.gameObject.transform.position.x > gameObject.transform.position.x)
+                if (collision.gameObject.transform.position.x > gameObject.transform.position.x)
                 {
                     isHurt = true;
                     rib.velocity = new Vector2(-5, rib.velocity.y);

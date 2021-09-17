@@ -2383,6 +2383,7 @@ GameObject:
   - component: {fileID: 1265262712}
   - component: {fileID: 1265262711}
   - component: {fileID: 1265262713}
+  - component: {fileID: 1265262714}
   m_Layer: 0
   m_Name: frog
   m_TagString: enemy
@@ -2471,7 +2472,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.1875, y: 2}
+    oldSize: {x: 2.5, y: 2.5625}
     newSize: {x: 2.1875, y: 2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -2520,6 +2521,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &1265262714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1265262708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1f2a403869080f479426b067e15a13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1311008795
 GameObject:
   m_ObjectHideFlags: 0
