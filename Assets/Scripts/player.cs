@@ -57,9 +57,29 @@ public class player : MonoBehaviour
             transform.localScale = new Vector3(hori, 1, 1);
         }
 
+        if (Input.GetButtonDown("Vertical"))
+        {
+            if (ani.GetBool("idle")&& rib.velocity.y == 0)
+            {
+                ani.SetBool("crouch", true);
+                ani.SetBool("idle", false);
+            }
+
+        }
+
+        if (Input.GetButtonUp("Vertical"))
+        {
+            if (ani.GetBool("crouch"))
+            {
+                ani.SetBool("crouch", false);
+                ani.SetBool("idle", true);
+            }
+
+        }
+
         if (Input.GetButtonDown("Jump"))
         {
-            if (coll.IsTouchingLayers(ground))
+            if (ani.GetBool("idle") && rib.velocity.y == 0)
             {
                 ani.SetBool("jump", true);
                 rib.velocity = new Vector2(rib.velocity.x, jumpForce);
@@ -98,7 +118,8 @@ public class player : MonoBehaviour
         }
 
         //下落接触地面
-        if (coll.IsTouchingLayers(ground) && ani.GetBool("fall"))
+        //if (coll.IsTouchingLayers(ground) && ani.GetBool("fall"))
+        if (rib.velocity.y == 0 && ani.GetBool("fall"))
         {
             ani.SetBool("fall", false);
             jumpping = false;
