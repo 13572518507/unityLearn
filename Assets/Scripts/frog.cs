@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class frog : MonoBehaviour
+public class frog : enemy
 {
 
-    private Animator ani;
+    //private Animator ani;
     private Rigidbody2D rb;
     private Collider2D coll;
     public LayerMask ground;
@@ -78,14 +78,15 @@ public class frog : MonoBehaviour
         }
     }
 
-    private void death()
-    {
-        Destroy(gameObject);
-    }
+    //private void death()
+    //{
+    //    Destroy(gameObject);
+    //}
 
-    public void deathAnimation()
-    {
-        ani.SetTrigger("death");
+    //public  void deathAnimation()
+    //{
+        
+    //    ani.SetTrigger("death");
 
-    }
+    //}
 }

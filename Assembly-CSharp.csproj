@@ -64,6 +64,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\eagle.cs" />
+    <Compile Include="Assets\Scripts\enemy.cs" />
     <Compile Include="Assets\Scripts\frog.cs" />
     <Compile Include="Assets\Scripts\player.cs" />
     <Reference Include="Unity.XR.Management">

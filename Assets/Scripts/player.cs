@@ -14,9 +14,11 @@ public class player : MonoBehaviour
     public Text cherText;
     private Rigidbody2D rib;
     private Animator ani;
+    private Transform headNode;
     private float horizontal;
     private bool jumpping;
     private bool isHurt;
+    private bool crouching;
 
 
 
@@ -24,6 +26,7 @@ public class player : MonoBehaviour
     {
         rib = GetComponent<Rigidbody2D>();
         ani = GetComponent<Animator>();
+        headNode = GameObject.Find("headPoint").gameObject.transform;
     }
 
     // Update is called once per frame
@@ -57,29 +60,43 @@ public class player : MonoBehaviour
             transform.localScale = new Vector3(hori, 1, 1);
         }
 
-        if (Input.GetButtonDown("Vertical"))
+        if (Input.GetButtonDown("Crouch"))
         {
-            if (ani.GetBool("idle")&& rib.velocity.y == 0)
+            Debug.Log("我蹲下了");
+            ani.SetBool("crouch", true);
+            ani.SetBool("idle", false);
+            GetComponent<BoxCollider2D>().enabled = false; //禁用
+            crouching = true;
+        }
+        
+        if (Input.GetButtonUp("Crouch"))
+        {
+            if (!Physics2D.OverlapCircle(headNode.position, 0.2f, ground))
             {
-                ani.SetBool("crouch", true);
-                ani.SetBool("idle", false);
+                Debug.Log("我又站起来了");
+                if (ani.GetBool("crouch"))
+                {
+                    ani.SetBool("crouch", false);
+                    ani.SetBool("idle", true);
+                    GetComponent<BoxCollider2D>().enabled = true; 
+                }
             }
-
+            crouching = false;
         }
 
-        if (Input.GetButtonUp("Vertical"))
+        if (!Physics2D.OverlapCircle(headNode.position, 0.2f, ground) && !crouching) //头上没有刚体
         {
             if (ani.GetBool("crouch"))
             {
                 ani.SetBool("crouch", false);
                 ani.SetBool("idle", true);
+                GetComponent<BoxCollider2D>().enabled = true;
             }
-
         }
 
         if (Input.GetButtonDown("Jump"))
         {
-            if (ani.GetBool("idle") && rib.velocity.y == 0)
+            if (ani.GetBool("idle")|| ani.GetFloat("running")!=0)
             {
                 ani.SetBool("jump", true);
                 rib.velocity = new Vector2(rib.velocity.x, jumpForce);
@@ -102,10 +119,14 @@ public class player : MonoBehaviour
         }
         else
         {
-            ani.SetBool("idle", true);
-            ani.SetFloat("running", 0);
+            if (!ani.GetBool("crouch")&&!ani.GetBool("hurt"))
+            {
+                ani.SetBool("idle", true);
+                ani.SetFloat("running", 0);
+            }
         }
 
+        
     }
 
     void switchAnimation()
@@ -129,6 +150,7 @@ public class player : MonoBehaviour
         //受伤后重返idle
         if (isHurt && Math.Abs(rib.velocity.x) < 0.1f)
         {
+            Debug.Log("wtm");
             ani.SetBool("idle", true);
             ani.SetBool("hurt", false);
             ani.SetFloat("running", 0);
@@ -163,7 +185,7 @@ public class player : MonoBehaviour
                 rib.velocity = new Vector2(rib.velocity.x, jumpForce);
                 //jumpping = true;
                 //Destroy(collision.gameObject);
-                collision.gameObject.GetComponent<frog>().deathAnimation();
+                collision.gameObject.GetComponent<enemy>().deathAnimation();
             }
             else
             {
@@ -172,13 +194,16 @@ public class player : MonoBehaviour
                     isHurt = true;
                     rib.velocity = new Vector2(-5, rib.velocity.y);
                     ani.SetBool("hurt", true);
+                    ani.SetBool("idle", false);
                 }
                 else
                 {
                     isHurt = true;
                     rib.velocity = new Vector2(5, rib.velocity.y);
                     ani.SetBool("hurt", true);
+                    ani.SetBool("idle", false);
                 }
+                    
             }
         }
     }
