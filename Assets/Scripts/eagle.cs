@@ -21,8 +21,8 @@ public class eagle : enemy
         coll = gameObject.GetComponent<BoxCollider2D>();
         ani = GetComponent<Animator>();
         tra = gameObject.transform;
-        topY = tra.position.y + 3;
-        bottomY = tra.position.y - 3;
+        topY = tra.position.y + 2;
+        bottomY = tra.position.y - 2;
     }
 
     // Update is called once per frame

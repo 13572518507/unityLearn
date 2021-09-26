@@ -96,10 +96,11 @@ public class player : MonoBehaviour
 
         if (Input.GetButtonDown("Jump"))
         {
-            if (ani.GetBool("idle")|| ani.GetFloat("running")!=0)
+            if ((ani.GetBool("idle")|| ani.GetFloat("running")!=0) && !jumpping)
             {
                 ani.SetBool("jump", true);
                 rib.velocity = new Vector2(rib.velocity.x, jumpForce);
+                GetComponent<BoxCollider2D>().enabled = false;
                 jumpping = true;
             }
 
@@ -144,6 +145,7 @@ public class player : MonoBehaviour
         {
             ani.SetBool("fall", false);
             jumpping = false;
+            GetComponent<BoxCollider2D>().enabled = true;
             ani.SetBool("idle", true);
         }
 
