@@ -7,8 +7,11 @@ using UnityEngine.UI;
 public class player : MonoBehaviour
 {
     public float speed;
+    public float climpSpeed;
     public float jumpForce;
+    public float gravityNum;
     public LayerMask ground;
+    public LayerMask landder;
     public Collider2D coll;
     public double collections;
     public Text cherText;
@@ -19,6 +22,9 @@ public class player : MonoBehaviour
     private bool jumpping;
     private bool isHurt;
     private bool crouching;
+    private bool climb;
+
+    public GameObject landLine;
 
 
 
@@ -27,14 +33,21 @@ public class player : MonoBehaviour
         rib = GetComponent<Rigidbody2D>();
         ani = GetComponent<Animator>();
         headNode = GameObject.Find("headPoint").gameObject.transform;
+        gravityNum = rib.gravityScale;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        Move();
-        switchAnimation();
+        checkLandder();
+        //if (!climb)
+        //{
+            Move();
+            switchAnimation();
+        //}
+        isClimbing();
+        
+        
 
     }
 
@@ -49,7 +62,44 @@ public class player : MonoBehaviour
         }
 
     }
+    void checkLandder()
+    {
+        climb = coll.IsTouchingLayers(landder);
+    }
 
+    void isClimbing()
+    {
+        if (climb)
+        {
+            rib.gravityScale = 0; //重力为零
+            landLine.GetComponent<BoxCollider2D>().enabled = false;
+            
+            //Vector3 pos = rib.gameObject.transform.position;
+            //rib.gameObject.transform.position = new Vector3(landLine.transform.position.x,pos.y,0);
+            float moveY = Input.GetAxis("Vertical");
+            if (moveY > 0.5f || moveY < -0.5f)
+            {
+                rib.velocity = new Vector2(0, moveY * climpSpeed);
+                ani.SetBool("climb", true);
+            }
+            else
+            {
+                ani.SetBool("climb", false);
+                rib.velocity = new Vector2(0, 0);
+            }
+
+            if (ani.GetBool("fall") || ani.GetBool("jump"))
+                ani.SetBool("climb", true);
+        }
+        else
+        {
+            if(ani.GetBool("climb"))
+                ani.SetBool("climb", false);
+            rib.gravityScale = gravityNum;
+            landLine.GetComponent<BoxCollider2D>().enabled = true;
+        }
+        
+    }
 
     void Move()
     {
@@ -60,7 +110,7 @@ public class player : MonoBehaviour
             transform.localScale = new Vector3(hori, 1, 1);
         }
 
-        if (Input.GetButtonDown("Crouch"))
+        if (Input.GetButtonDown("Crouch") && !climb)
         {
             Debug.Log("我蹲下了");
             ani.SetBool("crouch", true);
@@ -94,7 +144,7 @@ public class player : MonoBehaviour
             }
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump")&&!climb)
         {
             if ((ani.GetBool("idle")|| ani.GetFloat("running")!=0) && !jumpping)
             {
@@ -159,6 +209,7 @@ public class player : MonoBehaviour
             isHurt = false;
         }
 
+        
 
     }
 
@@ -208,6 +259,7 @@ public class player : MonoBehaviour
                     
             }
         }
+
     }
 
 }
