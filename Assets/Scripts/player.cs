@@ -15,6 +15,7 @@ public class player : MonoBehaviour
     public Collider2D coll;
     public double collections;
     public Text cherText;
+    public GameObject healthState;
     private Rigidbody2D rib;
     private Animator ani;
     private Transform headNode;
@@ -23,6 +24,8 @@ public class player : MonoBehaviour
     private bool isHurt;
     private bool crouching;
     private bool climb;
+
+    public float sumBlood = 180;
 
     public GameObject landLine;
 
@@ -256,9 +259,22 @@ public class player : MonoBehaviour
                     ani.SetBool("hurt", true);
                     ani.SetBool("idle", false);
                 }
-                    
+                bloodState();
             }
         }
+
+    }
+
+    private void bloodState()
+    {
+        Debug.Log("我被攻击了");
+        sumBlood = sumBlood - 40;
+        if (sumBlood < 0)
+        {
+            sumBlood = 0;
+            Destroy(gameObject);
+        }
+        healthState.GetComponent<RectTransform>().sizeDelta = new Vector2(sumBlood, 20);
 
     }
 

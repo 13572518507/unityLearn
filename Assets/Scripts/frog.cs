@@ -22,8 +22,8 @@ public class frog : enemy
         ani = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
-        leftPoint =  GameObject.Find("leftpoint").transform.position.x;
-        rightPoint = GameObject.Find("rightpoint").transform.position.x;
+        leftPoint =  gameObject.transform.position.x - 5;
+        rightPoint = gameObject.transform.position.x + 5;
 
     }
 
